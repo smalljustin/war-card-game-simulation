@@ -61,7 +61,7 @@ int main()
     int turns;
 
     std::ofstream outputFile;
-    outputFile.open("output_multi_size_deck.csv");
+    outputFile.open("output_multi_size_deck_full.csv");
     outputFile << "Deck Size,Turns,Count\n";
     std::cout << "Deck Size\tGame\tRounds\tTurns\tTurns/Rounds\tPlayer 1 Score - Player 2 Score\tWinner\n";
     Hand player1(RANGE_MAX);
@@ -137,7 +137,7 @@ int main()
             {
                 std::cout << deck_size << "\t\t" << game_num << "\t" << i << "\t" << turns << "\t" << turns_div_rounds << "\t\t" << (player1.scoreHand() - player2.scoreHand()) << "\t\t\t\t" << winner << "\n";
             }
-            // outputFile << deck_size << "," << game_num << "," << i << "," << turns << "," << turns_div_rounds << "," << (player1.scoreHand() - player2.scoreHand()) << "," << winner << "\n";
+            outputFile << deck_size << "," << game_num << "," << i << "," << turns << "," << turns_div_rounds << "," << (player1.scoreHand() - player2.scoreHand()) << "," << winner << "\n";
             
             bucket_idx = i / INCREMENT;
             if (bucket_idx > BUCKETS)
@@ -155,8 +155,9 @@ int main()
 
     for (i = 1; i < RANGE_MAX / INCREMENT; i++) {
         for (j = 0; j < BUCKETS; j++) {
-            std::cout << i * INCREMENT << "," << j * INCREMENT << "," << histogramLists[i][j] << "\n";
-            outputFile << i * INCREMENT << "," << j * INCREMENT << "," << histogramLists[i][j] << "\n";
+            continue;
+            // std::cout << i * INCREMENT << "," << j * INCREMENT << "," << histogramLists[i][j] << "\n";
+            // outputFile << i * INCREMENT << "," << j * INCREMENT << "," << histogramLists[i][j] << "\n";
         }
     }
     outputFile.close();
@@ -167,9 +168,6 @@ void resetDeck(Hand* player1, Hand* player2, struct Card* deck, int deck_size)
     player1->ClearCards();
     player2->ClearCards();
     Shuffle(deck, deck_size);
-
-    struct Card* player1Card;
-    struct Card* player2Card;
 
     int i;
     for (i = 0; i < deck_size; i += 2)

@@ -73,7 +73,7 @@ Result for a 52 card deck with 4 suits, tracking 28 games over 1,500 turns:
 ![52 cards, 4 suits, 1500 turns](https://raw.githubusercontent.com/jschmitz2/war-card-game-simulation/master/Images/Comparing%20Player%201%20and%20Player%202%20Hand%20Size%2C%2052%20card%20deck.PNG)
 
 Result for a 208 card deck with 4 suits, tracking 10 games over 20,000 turns:
-![208 cards, 4 suits, 1500 turns](https://raw.githubusercontent.com/jschmitz2/war-card-game-simulation/master/Images/Comparing%20Player%201%20and%20Player%202%20Hand%20Size%2C%2052%20card%20deck.PNG)
+![208 cards, 4 suits, 1500 turns](https://raw.githubusercontent.com/jschmitz2/war-card-game-simulation/master/Images/Comparing%20Player%201%20and%20Player%202%20Hand%20Size%2C%20208%20card%20deck.PNG)
 
 Result for a 208 card deck with 16 suits, tracking 10 games over 20,000 turns:
 ![208 cards, 16 suits, 1500 turns](https://raw.githubusercontent.com/jschmitz2/war-card-game-simulation/master/Images/Comparing%20Player%201%20and%20Player%202%20Hand%20Size%2C%20208%20card%20deck%2C%2016%20suits.PNG)

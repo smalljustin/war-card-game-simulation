@@ -8,12 +8,12 @@
 #include <iostream>
 
 
-Hand::Hand(int deckSize)
+Hand::Hand(int given_deck_size)
 {
-    activeCards = static_cast<struct Card**>(malloc(sizeof(struct Card*) * deckSize));
-    wonCards = static_cast<struct Card**>(malloc(sizeof(struct Card*) * deckSize));
+    activeCards = static_cast<struct Card**>(malloc(sizeof(struct Card*) * given_deck_size));
+    wonCards = static_cast<struct Card**>(malloc(sizeof(struct Card*) * given_deck_size));
 
-    deckSize = deckSize;
+    deckSize = given_deck_size;
     endActiveIdx = -1;
     endWonIdx = -1;
     seed = 0;
@@ -82,6 +82,12 @@ void Hand::StartRound()
     Shuffle();
 
     return;
+}
+
+int Hand::TotalCards()
+{
+    return (endWonIdx + endActiveIdx + 2);
+
 }
 
 struct Card* Hand::GetActiveCard()

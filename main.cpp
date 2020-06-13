@@ -25,8 +25,7 @@ struct Card* GenDeck(int deckSize, int suits)
     {
         for (j = 0; j < suits; j++)
         {
-            *(Deck + k) = { j, i };
-            k++;
+            *(Deck + k++) = { j, i };
         }
     }
     return Deck;
@@ -44,121 +43,104 @@ int main()
 {
     const int SUITS = 4;
     const int GAMES = 1000;
-    const int RANGE_MIN = 50;
-    const int RANGE_MAX = 500;
+    const int DECK_SIZE = 208;
 
-    const int INCREMENT = 50;
-    const int MAX_BUCKET_IDX = 10000;
+    // const int INCREMENT = 50;
+    // const int MAX_BUCKET_IDX = 10000;
 
-    int BUCKETS = MAX_BUCKET_IDX / INCREMENT;
+    // int BUCKETS = MAX_BUCKET_IDX / INCREMENT;
 
-    int deck_size;
-    int raw_deck_size;
-    int game_num;
+    int NUM_GAMES_TRACKED = (10 * 2);
+    int TURNS_TRACKED = 20000;
+
     int i;
     int j;
-    int verbose;
     int turns;
 
     std::ofstream outputFile;
-    outputFile.open("output_multi_size_deck_full.csv");
-    outputFile << "Deck Size,Turns,Count\n";
-    std::cout << "Deck Size\tGame\tRounds\tTurns\tTurns/Rounds\tPlayer 1 Score - Player 2 Score\tWinner\n";
-    Hand player1(RANGE_MAX);
-    Hand player2(RANGE_MAX);
+
+    outputFile.open("tracking_players_handsize_large.csv");
+    outputFile << "Turn Number,";
+    for (j = 0; j < (NUM_GAMES_TRACKED / 2); j++) {
+        outputFile << "Game " << (j + 1) << " Player 1,";
+        outputFile << "Game " << (j + 1) << " Player 2,";
+
+    }
+    outputFile << "\n";
+
+    // outputFile << "Deck Size,Turns,Count\n";
+    //std::cout << "Deck Size\tGame\tRounds\tTurns\tTurns/Rounds\tPlayer 1 Score - Player 2 Score\tWinner\n";
+    //outputFile << "Deck Size,Game,Rounds,Turns,Turns/Rounds,Player 1 Score - Player 2 Score,Winner\n";
+    Hand player1(DECK_SIZE);
+    Hand player2(DECK_SIZE);
     struct Card* deck;
-    
-    int bucket_idx;
 
-    int** histogramLists = static_cast<int **>(malloc(sizeof(int*) * RANGE_MAX/INCREMENT));
+    //int bucket_idx;
 
-    for (i = 0; i < RANGE_MAX / INCREMENT; i++) {
-        histogramLists[i] = static_cast<int*>(calloc(BUCKETS, sizeof(int)));
+    //int** histogramLists = static_cast<int **>(malloc(sizeof(int*) * RANGE_MAX/INCREMENT));
+
+    //for (i = 0; i < RANGE_MAX / INCREMENT; i++) {
+    //    histogramLists[i] = static_cast<int*>(calloc(BUCKETS, sizeof(int)));
+    //}
+
+    int** scoreLists = static_cast<int**>(malloc(sizeof(int*) * NUM_GAMES_TRACKED));
+
+    for (i = 0; i < NUM_GAMES_TRACKED; i++) {
+        scoreLists[i] = static_cast<int*>(malloc(sizeof(int) * TURNS_TRACKED));
     }
 
+    struct Card** player1WarCards = static_cast<struct Card**>(malloc(sizeof(struct Card*) * DECK_SIZE));
+    struct Card** player2WarCards = static_cast<struct Card**>(malloc(sizeof(struct Card*) * DECK_SIZE));
 
-    struct Card** player1WarCards = static_cast<struct Card**>(malloc(sizeof(struct Card*) * RANGE_MAX));
-    struct Card** player2WarCards = static_cast<struct Card**>(malloc(sizeof(struct Card*) * RANGE_MAX));
 
+    deck = GenDeck(DECK_SIZE, SUITS);
+    Shuffle(deck, DECK_SIZE);
+    std::string winner;
 
-    for (raw_deck_size = RANGE_MIN; raw_deck_size < RANGE_MAX; raw_deck_size += INCREMENT)
+    int game_num;
+
+    for (game_num = 0; game_num < NUM_GAMES_TRACKED; game_num += 2)
     {
-        deck_size = (raw_deck_size / 4) * 4;
-        deck = GenDeck(deck_size, SUITS);
-        Shuffle(deck, deck_size);
-        std::string winner;
+        resetDeck(&player1, &player2, deck, DECK_SIZE);
 
-        for (game_num = 0; game_num < 2500; game_num++)
+        player1.StartRound();
+        player2.StartRound();
+
+        turns = 0;
+        i = 0;
+        int runoff_cards;
+
+        while ((player1.handSize() > 0 && player2.handSize() > 0))
         {
-            for (i = 0; i < deck_size; i += 2)
-            {
-                player1.AddWonCard((deck + i));
-                player2.AddWonCard((deck + i + 1));
-            }
-
             player1.StartRound();
             player2.StartRound();
-
-            turns = 0;
-            i = 0;
-            verbose = 0;
-            
-
-            while ((player1.handSize() > 0 && player2.handSize() > 0))
-            {
-                if (i > 500000)
-                {
-                    verbose = 1;
-                }
-
-                i += 1;
-
-                if (verbose) {
-                    std::cout << "Player 1: " << player1.handSize() << "\tPlayer 2: " << player2.handSize() << "\n";
-                    player1.printCards();
-                    player2.printCards();
-                }
-                round(&player1, &player2, player1WarCards, player2WarCards, verbose, &turns);
-                player1.StartRound();
-                player2.StartRound();
-            }
-
-            if (player1.handSize() == 0)
-            {
-                winner = "Player 2";
-            }
-            else {
-                winner = "Player 1";
-            }
-
-            double turns_div_rounds = static_cast<double>(turns) / static_cast<double>(i);
-            resetDeck(&player1, &player2, deck, deck_size);
-            if (game_num % 50 == 0)
-            {
-                std::cout << deck_size << "\t\t" << game_num << "\t" << i << "\t" << turns << "\t" << turns_div_rounds << "\t\t" << (player1.scoreHand() - player2.scoreHand()) << "\t\t\t\t" << winner << "\n";
-            }
-            outputFile << deck_size << "," << game_num << "," << i << "," << turns << "," << turns_div_rounds << "," << (player1.scoreHand() - player2.scoreHand()) << "," << winner << "\n";
-            
-            bucket_idx = i / INCREMENT;
-            if (bucket_idx > BUCKETS)
-            {
-                bucket_idx = (BUCKETS - 1); // last bucket
-            }
-
-            histogramLists[raw_deck_size / INCREMENT][bucket_idx] += 1;
+            i += 1;
+            round(&player1, &player2, player1WarCards, player2WarCards, 0, &turns, scoreLists[game_num], scoreLists[game_num + 1], TURNS_TRACKED);
         }
-        
-        player1.ClearCards();
-        player2.ClearCards();
+            
+        if (player1.handSize() == 0)
+        {
+            winner = "Player 2";
+            runoff_cards = 0;
+        }
+        else {
+            winner = "Player 1";
+            runoff_cards = DECK_SIZE;
+        }
 
+        turns += 1;
+        for (i = turns; i < TURNS_TRACKED; i++) {
+            scoreLists[game_num][i] = runoff_cards;
+            scoreLists[game_num + 1][i] = (DECK_SIZE - runoff_cards);
+        }
     }
 
-    for (i = 1; i < RANGE_MAX / INCREMENT; i++) {
-        for (j = 0; j < BUCKETS; j++) {
-            continue;
-            // std::cout << i * INCREMENT << "," << j * INCREMENT << "," << histogramLists[i][j] << "\n";
-            // outputFile << i * INCREMENT << "," << j * INCREMENT << "," << histogramLists[i][j] << "\n";
+    for (i = 0; i < TURNS_TRACKED; i++) {
+        outputFile << "Turn " << i << ",";
+        for (j = 0; j < NUM_GAMES_TRACKED; j++) {
+            outputFile << scoreLists[j][i] << ", ";
         }
+        outputFile << "\n";
     }
     outputFile.close();
 }
@@ -172,24 +154,35 @@ void resetDeck(Hand* player1, Hand* player2, struct Card* deck, int deck_size)
     int i;
     for (i = 0; i < deck_size; i += 2)
     {
-        player1->AddWonCard((deck + i));
-        player2->AddWonCard((deck + i + 1));
+        player1->AddActiveCard((deck + i));
+        player2->AddActiveCard((deck + i + 1));
     }
-    player1->StartRound();
-    player2->StartRound();
+
     return;
 }
 
-void round(Hand* player1, Hand* player2, struct Card** player1WarCards, struct Card** player2WarCards, int verbose, int* turns)
+void round(Hand* player1, Hand* player2, struct Card** player1WarCards, struct Card** player2WarCards, int verbose, int* turns, int* turnTrackerPlayer1, int* turnTrackerPlayer2, int maxTurns)
 {
     int turn;
     int i;
-    struct Card* player1Card, * player2Card;
+    struct Card *player1Card, *player2Card;
     Hand* winningPlayer;
 
-    for (turn = 0; turn <= player1->handSize() && turn <= player2->handSize(); turn++)
+    turnTrackerPlayer1[*turns] = player1->TotalCards();
+    turnTrackerPlayer2[*turns] = player2->TotalCards();
+
+    for (turn = 0; ((turn <= player1->handSize() && turn <= player2->handSize()) && turn <= maxTurns); turn++)
     {
         *(turns) += 1;
+
+        if (*(turns) > maxTurns) {
+            player1->ClearCards();
+            player2->ClearCards();
+            return;
+        }
+        turnTrackerPlayer1[*turns] = player1->TotalCards();
+        turnTrackerPlayer2[*turns] = player2->TotalCards();
+
         player1Card = player1->GetActiveCard();
         player2Card = player2->GetActiveCard();
 
@@ -264,7 +257,6 @@ Hand* war(Hand* player1, Hand* player2, struct Card** player1WarCards, struct Ca
         player1WarCards[*idx] = t_p1_card;
         player2WarCards[*idx] = nullptr;
         *(idx) = *idx + 1;
-
         return player2;
     }
     else if (t_p1_card == nullptr && t_p2_card != nullptr) {

@@ -15,6 +15,7 @@ public:
     void AddActiveCard(struct Card* card);
     void ClearCards(void);
     void StartRound();
+    int TotalCards();
     struct Card* GetActiveCard();
     struct Card* GetWonCard();
     void Shuffle();

@@ -41,7 +41,7 @@ void Shuffle(struct Card* deck, int deckSize)
 
 int main()
 {
-    const int SUITS = 4;
+    const int SUITS = 16;
     const int GAMES = 1000;
     const int DECK_SIZE = 208;
 
@@ -59,7 +59,7 @@ int main()
 
     std::ofstream outputFile;
 
-    outputFile.open("tracking_players_handsize_large.csv");
+    outputFile.open("tracking_players_handsize_large_16_suits.csv");
     outputFile << "Turn Number,";
     for (j = 0; j < (NUM_GAMES_TRACKED / 2); j++) {
         outputFile << "Game " << (j + 1) << " Player 1,";

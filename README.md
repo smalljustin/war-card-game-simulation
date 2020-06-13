@@ -62,7 +62,7 @@ We plot the average number of turns per game and the average number of rounds pe
 
 The number of rounds per game appears to be linear, and the number of turns per game appears to be O(n^3). Both of these analysis were done by looking at the graph, and adjsting the trendline on Excel until it looked about right. 
 
-![Growth Rates of Rounds and Turns As A Function of Deck Size](todo: link)
+![Growth Rates of Rounds and Turns As A Function of Deck Size](https://raw.githubusercontent.com/jschmitz2/war-card-game-simulation/master/Images/Functional%20Growth%20Rates%20of%20Rounds%20and%20Turns%20Per%20Deck%20Size.PNG)
 
 ##### Compaaring Player 1 and Player 2 Hand Size Over Time
 
@@ -76,7 +76,7 @@ Result for a 208 card deck with 4 suits, tracking 10 games over 20,000 turns:
 ![208 cards, 4 suits, 1500 turns](https://raw.githubusercontent.com/jschmitz2/war-card-game-simulation/master/Images/Comparing%20Player%201%20and%20Player%202%20Hand%20Size%2C%2052%20card%20deck.PNG)
 
 Result for a 208 card deck with 16 suits, tracking 10 games over 20,000 turns:
-![208 cards, 16 suits, 1500 turns](todo: link)
+![208 cards, 16 suits, 1500 turns](https://raw.githubusercontent.com/jschmitz2/war-card-game-simulation/master/Images/Comparing%20Player%201%20and%20Player%202%20Hand%20Size%2C%20208%20card%20deck%2C%2016%20suits.PNG)
 
 Note that with more suits, it's more likely that players enter a "WAR" scenario, leading to a greater average turn to turn number of cards exchanged. Thus, we see that the greater the number of suits (and thus the greater the number of cards with the same numeric value), the shorter the average game. 
 
